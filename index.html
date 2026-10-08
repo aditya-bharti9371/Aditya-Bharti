@@ -1,0 +1,837 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DriveNow - Online Car Booking</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7fc;
+    color: #17213a;
+}
+
+header {
+    background: #101b36;
+    color: white;
+    padding: 20px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 27px;
+    font-weight: bold;
+    color: #5c7cfa;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 22px;
+}
+
+.hero {
+    padding: 65px 8%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 35px;
+    background: linear-gradient(120deg, #e7edff, #f7f9ff);
+}
+
+.hero-content {
+    flex: 1;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.hero h1 span {
+    color: #315efb;
+}
+
+.hero p {
+    color: #626d82;
+    line-height: 1.7;
+    margin-bottom: 25px;
+}
+
+.hero img {
+    width: 48%;
+    border-radius: 20px;
+    object-fit: cover;
+}
+
+.btn {
+    background: #315efb;
+    color: white;
+    border: none;
+    padding: 13px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background: #2047d4;
+}
+
+.search-box {
+    background: white;
+    margin: -20px auto 30px;
+    width: 84%;
+    padding: 22px;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px #00000012;
+    position: relative;
+}
+
+.search-box form {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr) auto;
+    gap: 15px;
+    align-items: end;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d8deea;
+    border-radius: 7px;
+    background: white;
+}
+
+section.cars {
+    padding: 45px 8%;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section-title h2 {
+    font-size: 34px;
+    margin-bottom: 10px;
+}
+
+.section-title p {
+    color: #69748a;
+}
+
+.car-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.car-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px #0000000d;
+    transition: 0.25s;
+}
+
+.car-card:hover {
+    transform: translateY(-5px);
+}
+
+.car-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.car-info {
+    padding: 20px;
+}
+
+.car-info h3 {
+    margin-bottom: 10px;
+}
+
+.car-info p {
+    color: #69748a;
+    margin: 10px 0;
+}
+
+.car-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.price {
+    font-size: 20px;
+    font-weight: bold;
+    color: #315efb;
+}
+
+.price small {
+    font-size: 12px;
+    color: #69748a;
+}
+
+.features {
+    padding: 55px 8%;
+    background: white;
+    text-align: center;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.feature {
+    padding: 25px;
+    border: 1px solid #e2e7f0;
+    border-radius: 12px;
+}
+
+.feature h3 {
+    margin: 12px 0;
+}
+
+.feature p {
+    color: #69748a;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    background: #101b36;
+    color: white;
+}
+
+/* Booking popup */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0009;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    z-index: 10;
+    overflow-y: auto;
+}
+
+.modal-content {
+    background: white;
+    padding: 28px;
+    border-radius: 15px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 95vh;
+    overflow-y: auto;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.close {
+    border: none;
+    background: none;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.booking-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.full {
+    grid-column: 1 / -1;
+}
+
+.total {
+    background: #edf1ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 18px 0;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
+
+.message {
+    margin-top: 15px;
+    line-height: 1.6;
+}
+
+@media(max-width: 850px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero img {
+        width: 100%;
+    }
+
+    .car-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .search-box form {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media(max-width: 560px) {
+    header {
+        padding: 18px 5%;
+    }
+
+    nav a {
+        margin-left: 8px;
+        font-size: 12px;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .car-grid, .feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-box {
+        width: 90%;
+    }
+
+    .search-box form, .booking-form {
+        grid-template-columns: 1fr;
+    }
+
+    .full {
+        grid-column: auto;
+    }
+
+    .section-title h2 {
+        font-size: 27px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">DriveNow 🚘</div>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#cars">Cars</a>
+        <a href="#features">About</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Find Your Drive.<br><span>Own the Road.</span></h1>
+        <p>
+            Book your perfect car for business trips, family holidays
+            and everyday travel. Easy booking, transparent prices
+            and a comfortable journey.
+        </p>
+        <a href="#cars"><button class="btn">Explore Cars →</button></a>
+    </div>
+
+    <img
+      src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80"
+      alt="Luxury car">
+</section>
+
+<div class="search-box">
+    <form id="searchForm">
+        <div>
+            <label for="location">Pickup Location</label>
+            <select id="location">
+                <option value="">All locations</option>
+                <option>Mumbai</option>
+                <option>Pune</option>
+                <option>Delhi</option>
+                <option>Bengaluru</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="searchPickup">Pickup Date</label>
+            <input type="date" id="searchPickup">
+        </div>
+
+        <div>
+            <label for="searchReturn">Return Date</label>
+            <input type="date" id="searchReturn">
+        </div>
+
+        <button class="btn" type="submit">Search Cars</button>
+    </form>
+</div>
+
+<section class="cars" id="cars">
+    <div class="section-title">
+        <h2>Our Available Cars</h2>
+        <p>Choose the right car for your journey.</p>
+    </div>
+
+    <div class="car-grid" id="carGrid"></div>
+    <p id="emptyMessage" style="display:none;text-align:center;padding:25px">
+        No cars found for this location.
+    </p>
+</section>
+
+<section class="features" id="features">
+    <div class="section-title">
+        <h2>Why Choose DriveNow?</h2>
+        <p>Making every journey easier.</p>
+    </div>
+
+    <div class="feature-grid">
+        <div class="feature">
+            <h2>⚡</h2>
+            <h3>Easy Booking</h3>
+            <p>Book your preferred car in just a few simple steps.</p>
+        </div>
+
+        <div class="feature">
+            <h2>💰</h2>
+            <h3>Affordable Prices</h3>
+            <p>See your estimated rental cost before confirming.</p>
+        </div>
+
+        <div class="feature">
+            <h2>🚘</h2>
+            <h3>Multiple Choices</h3>
+            <p>Choose from hatchbacks, sedans and SUVs.</p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <p>© <span id="year"></span> DriveNow | Online Car Booking Website</p>
+    <p style="margin-top:8px">Your journey starts here!</p>
+</footer>
+
+<!-- Booking Modal -->
+<div class="modal" id="bookingModal" role="dialog"
+     aria-modal="true" aria-labelledby="bookingTitle">
+    <div class="modal-content">
+        <div id="bookingPanel">
+            <div class="modal-header">
+                <div>
+                    <h2 id="bookingTitle">Book Your Car</h2>
+                    <p id="selectedCar" style="margin-top:8px;color:#69748a"></p>
+                </div>
+                <button class="close" id="closeModal" aria-label="Close">&times;</button>
+            </div>
+
+            <form id="bookingForm">
+                <div class="booking-form">
+                    <div class="full">
+                        <label for="name">Full Name</label>
+                        <input id="name" required maxlength="80"
+                               placeholder="Enter your name">
+                    </div>
+
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required
+                               placeholder="you@example.com">
+                    </div>
+
+                    <div>
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required
+                               pattern="[0-9+() -]{8,18}"
+                               placeholder="+91 98765 43210">
+                    </div>
+
+                    <div class="full">
+                        <label for="bookingLocation">Pickup Location</label>
+                        <select id="bookingLocation" required>
+                            <option value="">Select location</option>
+                            <option>Mumbai</option>
+                            <option>Pune</option>
+                            <option>Delhi</option>
+                            <option>Bengaluru</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="pickupDate">Pickup Date</label>
+                        <input type="date" id="pickupDate" required>
+                    </div>
+
+                    <div>
+                        <label for="returnDate">Return Date</label>
+                        <input type="date" id="returnDate" required>
+                    </div>
+                </div>
+
+                <div class="total">
+                    <span id="daysText">Estimated total</span>
+                    <span id="totalPrice">₹0</span>
+                </div>
+
+                <p id="errorMessage" class="message"
+                   style="display:none;color:#c62828"></p>
+
+                <button class="btn" type="submit" style="width:100%">
+                    Confirm Booking
+                </button>
+
+                <p style="font-size:12px;color:#69748a;margin-top:12px;line-height:1.5">
+                    Demo only: this form does not process payments or send
+                    booking details to a server.
+                </p>
+            </form>
+        </div>
+
+        <div id="successPanel" style="display:none;text-align:center">
+            <h2 style="color:#16845b">✓ Booking Request Created!</h2>
+            <p id="successMessage" class="message"></p>
+            <p id="reference" style="font-weight:bold;margin:15px 0"></p>
+            <button class="btn" id="doneButton">Done</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const cars = [
+    {
+        id: 1,
+        name: "Maruti Swift",
+        type: "Hatchback",
+        price: 1499,
+        seats: 5,
+        transmission: "Manual",
+        location: "Mumbai",
+        image: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: 2,
+        name: "Hyundai Verna",
+        type: "Sedan",
+        price: 2299,
+        seats: 5,
+        transmission: "Automatic",
+        location: "Pune",
+        image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: 3,
+        name: "Kia Seltos",
+        type: "SUV",
+        price: 3299,
+        seats: 5,
+        transmission: "Automatic",
+        location: "Mumbai",
+        image: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: 4,
+        name: "Tata Nexon",
+        type: "SUV",
+        price: 2499,
+        seats: 5,
+        transmission: "Manual",
+        location: "Delhi",
+        image: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: 5,
+        name: "Honda City",
+        type: "Sedan",
+        price: 2599,
+        seats: 5,
+        transmission: "Automatic",
+        location: "Bengaluru",
+        image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+        id: 6,
+        name: "BMW 3 Series",
+        type: "Luxury",
+        price: 7999,
+        seats: 5,
+        transmission: "Automatic",
+        location: "Mumbai",
+        image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=800&q=80"
+    }
+];
+
+const carGrid = document.getElementById("carGrid");
+const modal = document.getElementById("bookingModal");
+let selectedCar = null;
+
+function money(amount) {
+    return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 0
+    }).format(amount);
+}
+
+function today() {
+    const date = new Date();
+    date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+    return date.toISOString().split("T")[0];
+}
+
+function rentalDays(start, end) {
+    if (!start || !end) return 1;
+
+    const first = new Date(start + "T00:00:00");
+    const last = new Date(end + "T00:00:00");
+
+    return Math.max(1, Math.ceil((last - first) / 86400000));
+}
+
+function renderCars() {
+    const location = document.getElementById("location").value;
+    const available = cars.filter(car =>
+        !location || car.location === location
+    );
+
+    carGrid.innerHTML = available.map(car => `
+        <div class="car-card">
+            <img src="${car.image}" alt="${car.name}"
+                 loading="lazy"
+                 onerror="this.src='https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800&q=80'">
+
+            <div class="car-info">
+                <h3>${car.name}</h3>
+                <p>${car.type} · ${car.location}</p>
+                <p>👤 ${car.seats} Seats</p>
+                <p>⚙ ${car.transmission}</p>
+
+                <div class="car-bottom">
+                    <div class="price">
+                        ${money(car.price)}
+                        <small>/day</small>
+                    </div>
+
+                    <button class="btn" data-book="${car.id}">
+                        Book Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join("");
+
+    document.getElementById("emptyMessage").style.display =
+        available.length ? "none" : "block";
+
+    carGrid.style.display = available.length ? "grid" : "none";
+}
+
+function openBooking(carId) {
+    selectedCar = cars.find(car => car.id === Number(carId));
+
+    if (!selectedCar) return;
+
+    document.getElementById("bookingForm").reset();
+    document.getElementById("bookingPanel").style.display = "block";
+    document.getElementById("successPanel").style.display = "none";
+
+    document.getElementById("selectedCar").textContent =
+        `${selectedCar.name} — ${money(selectedCar.price)} per day`;
+
+    const searchPickup = document.getElementById("searchPickup").value;
+    const searchReturn = document.getElementById("searchReturn").value;
+
+    document.getElementById("pickupDate").value =
+        searchPickup || today();
+
+    document.getElementById("returnDate").value =
+        searchReturn || searchPickup || today();
+
+    document.getElementById("bookingLocation").value =
+        document.getElementById("location").value || selectedCar.location;
+
+    document.getElementById("pickupDate").min = today();
+    updateReturnMinimum();
+    updateTotal();
+
+    document.getElementById("errorMessage").style.display = "none";
+    modal.style.display = "flex";
+}
+
+function closeBooking() {
+    modal.style.display = "none";
+}
+
+function updateReturnMinimum() {
+    const pickup = document.getElementById("pickupDate");
+    const ret = document.getElementById("returnDate");
+
+    ret.min = pickup.value || today();
+
+    if (ret.value && ret.value < ret.min) {
+        ret.value = ret.min;
+    }
+}
+
+function updateTotal() {
+    if (!selectedCar) return;
+
+    const pickup = document.getElementById("pickupDate").value;
+    const ret = document.getElementById("returnDate").value;
+    const days = rentalDays(pickup, ret);
+
+    document.getElementById("daysText").textContent =
+        `Estimated total (${days} day${days === 1 ? "" : "s"})`;
+
+    document.getElementById("totalPrice").textContent =
+        money(selectedCar.price * days);
+}
+
+// Search cars
+document.getElementById("searchForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const pickup = document.getElementById("searchPickup").value;
+    const ret = document.getElementById("searchReturn").value;
+
+    if ((pickup && !ret) || (!pickup && ret)) {
+        alert("Please select both pickup and return dates.");
+        return;
+    }
+
+    if (pickup && pickup < today()) {
+        alert("Pickup date cannot be in the past.");
+        return;
+    }
+
+    if (pickup && ret && ret < pickup) {
+        alert("Return date must be on or after pickup date.");
+        return;
+    }
+
+    renderCars();
+    document.getElementById("cars").scrollIntoView({
+        behavior: "smooth"
+    });
+});
+
+// Open a booking form
+carGrid.addEventListener("click", event => {
+    const button = event.target.closest("[data-book]");
+
+    if (button) {
+        openBooking(button.dataset.book);
+    }
+});
+
+// Update estimated price when dates change
+document.getElementById("pickupDate").addEventListener("change", () => {
+    updateReturnMinimum();
+    updateTotal();
+});
+
+document.getElementById("returnDate").addEventListener("change", updateTotal);
+
+// Validate and confirm demo booking
+document.getElementById("bookingForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const pickup = document.getElementById("pickupDate").value;
+    const ret = document.getElementById("returnDate").value;
+    const error = document.getElementById("errorMessage");
+
+    if (pickup < today() || ret < pickup) {
+        error.textContent =
+            "Please choose valid dates. Return must be on or after pickup.";
+        error.style.display = "block";
+        return;
+    }
+
+    if (!event.target.reportValidity()) return;
+
+    const name = document.getElementById("name").value.trim();
+    const location = document.getElementById("bookingLocation").value;
+    const days = rentalDays(pickup, ret);
+    const total = selectedCar.price * days;
+
+    const reference = "DN" +
+        Math.random().toString(36).slice(2, 8).toUpperCase();
+
+    document.getElementById("bookingPanel").style.display = "none";
+    document.getElementById("successPanel").style.display = "block";
+
+    document.getElementById("successMessage").textContent =
+        `Thank you, ${name}! Your demo booking request for ` +
+        `${selectedCar.name} in ${location}, from ${pickup} to ${ret}, ` +
+        `has been prepared. Estimated total: ${money(total)}.`;
+
+    document.getElementById("reference").textContent =
+        "Booking Reference: " + reference;
+});
+
+document.getElementById("closeModal").addEventListener("click", closeBooking);
+document.getElementById("doneButton").addEventListener("click", closeBooking);
+
+modal.addEventListener("click", event => {
+    if (event.target === modal) closeBooking();
+});
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeBooking();
+});
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+// Set minimum dates
+["searchPickup", "searchReturn", "pickupDate", "returnDate"].forEach(id => {
+    document.getElementById(id).min = today();
+});
+
+document.getElementById("searchPickup").addEventListener("change", () => {
+    const pickup = document.getElementById("searchPickup");
+    const ret = document.getElementById("searchReturn");
+
+    ret.min = pickup.value || today();
+
+    if (ret.value && ret.value < ret.min) {
+        ret.value = ret.min;
+    }
+});
+
+renderCars();
+</script>
+
+</body>
+</html>
